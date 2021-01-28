@@ -3,61 +3,40 @@ import java.util.*
 fun main() {
     var iterate = 0
     val a = mutableListOf(
-        mutableListOf(4),
-        mutableListOf(1, 3, 4),
-        mutableListOf(2, 1, 1, 4),
-        mutableListOf(4, 3, 4),
-        mutableListOf(2, 4),
-        mutableListOf(2, 6),
-        mutableListOf(2, 4),
-        mutableListOf(1, 5, 1),
-        mutableListOf(1, 1, 3),
-        mutableListOf(5, 2),
-        mutableListOf(1, 2),
-        mutableListOf(1, 2),
-        mutableListOf(1, 2, 4, 2),
-        mutableListOf(2, 4, 5),
-        mutableListOf(3, 1, 1, 1, 1)
+        mutableListOf(3),
+        mutableListOf(1),
+        mutableListOf(3),
+        mutableListOf(1),
+        mutableListOf(3),
     )
     val b = mutableListOf(
-        mutableListOf(4, 3),
-        mutableListOf(6, 1, 2),
-        mutableListOf(4, 1, 1),
-        mutableListOf(1, 4),
-        mutableListOf(3, 2, 3),
-        mutableListOf(1, 1),
-        mutableListOf(5, 1),
-        mutableListOf(4, 3),
-        mutableListOf(5, 1),
-        mutableListOf(4, 1),
-        mutableListOf(3, 3),
-        mutableListOf(4, 1, 1, 1),
-        mutableListOf(4, 2, 1),
-        mutableListOf(4, 7),
-        mutableListOf(4, 7)
+        mutableListOf(1, 3),
+        mutableListOf(1, 1, 1),
+        mutableListOf(3, 1),
     )
-    val size = a.count()
-    val state = Array(size) { IntArray(size) { 0 } }
+    val n = a.size
+    val m = b.size
+    val state = Array(n) { IntArray(m) { 0 } }
     // 0:未確定, 1:■, -1:×
     var finish: Boolean
     do {
         finish = true
-        for (i in 0 until size) {
+        for (i in 0 until n) {
             if (!state[i].contains(0)) continue
             val cands = mutableListOf<Array<Int>>()
-            bitSearch@for (bits in 0 until 1.shl(size)) {
-                val choice = Array(size) { 0 }
-                for (j in 0 until size) {
+            bitSearch@ for (bits in 0 until 1.shl(m)) {
+                val choice = Array(m) { 0 }
+                for (j in 0 until m) {
                     choice[j] = if ((1.shl(j) and bits) != 0) 1 else -1
                 }
-                for (j in 0 until size) {
+                for (j in 0 until m) {
                     if ((state[i][j] == 1 && choice[j] == -1) || (state[i][j] == -1 && choice[j] == 1)) {
                         continue@bitSearch
                     }
                 }
                 if (check(a[i], choice)) cands.add(choice)
             }
-            for (j in 0 until size) {
+            for (j in 0 until m) {
                 if (cands.all { it[j] == 1 }) {
                     state[i][j] = 1
                     finish = false
@@ -68,22 +47,22 @@ fun main() {
             }
         }
 
-        for (i in 0 until size) {
-            if (!(0 until size).map { state[it][i] }.contains(0)) continue
+        for (i in 0 until m) {
+            if (!(0 until n).map { state[it][i] }.contains(0)) continue
             val cands = mutableListOf<Array<Int>>()
-            bitSearch@for (bits in 0 until 1.shl(size)) {
-                val choice = Array(size) { 0 }
-                for (j in 0 until size) {
+            bitSearch@ for (bits in 0 until 1.shl(n)) {
+                val choice = Array(n) { 0 }
+                for (j in 0 until n) {
                     choice[j] = if ((1.shl(j) and bits) != 0) 1 else -1
                 }
-                for (j in 0 until size) {
+                for (j in 0 until n) {
                     if ((state[j][i] == 1 && choice[j] == -1) || (state[j][i] == -1 && choice[j] == 1)) {
                         continue@bitSearch
                     }
                 }
                 if (check(b[i], choice)) cands.add(choice)
             }
-            for (j in 0 until size) {
+            for (j in 0 until n) {
                 if (cands.all { it[j] == 1 }) {
                     state[j][i] = 1
                     finish = false
